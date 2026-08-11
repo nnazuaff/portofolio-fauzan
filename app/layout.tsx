@@ -26,12 +26,14 @@ export const metadata: Metadata = {
       "Membangun aplikasi web terstruktur dari database sampai deployment.",
     type: "website",
     locale: "id_ID",
+    images: ["/og-image.svg"],
   },
   twitter: {
     card: "summary_large_image",
     title: "Fauzan Zhahir Arrafi | Full Stack Web Developer",
     description:
       "Membangun aplikasi web terstruktur dari database sampai deployment.",
+    images: ["/og-image.svg"],
   },
 };
 

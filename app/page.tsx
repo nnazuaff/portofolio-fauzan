@@ -374,7 +374,7 @@ export default function Home() {
 
         <section
           id="top"
-          className="relative flex min-h-[100dvh] items-center border-b border-white/10 px-5 pb-24 pt-20 md:px-10"
+          className="relative flex min-h-[100dvh] items-start border-b border-white/10 px-5 pb-28 pt-24 md:px-10 lg:items-center lg:pb-24 lg:pt-20"
         >
           <div className="absolute inset-0 opacity-25 [background-image:linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] [background-size:3rem_3rem] [mask-image:linear-gradient(to_bottom,black,transparent_90%)]" />
           <div className="absolute -right-32 top-20 h-[28rem] w-[28rem] rounded-full bg-[#17cbb3]/[0.06] blur-[8rem]" />
@@ -418,20 +418,22 @@ export default function Home() {
               animate="visible"
               variants={reveal}
               transition={revealTransition(0.25)}
-              className="group relative mx-auto hidden w-full max-w-md lg:col-span-5 lg:ml-auto lg:block"
+              className="group relative order-first mx-auto mb-16 block w-full max-w-sm border border-white/15 bg-[#111820] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_20px_60px_rgba(3,9,14,0.34)] sm:max-w-md lg:order-none lg:mb-0 lg:col-span-5 lg:ml-auto"
             >
-              <div className="relative aspect-[4/5] overflow-hidden bg-[#111820]">
+              <div className="relative aspect-[4/5] overflow-hidden border border-white/10 bg-[#0d1117]">
                 <Image
                   src="/profile-fauzan.jpg"
-                  alt="Potret formal Fauzan Zhahir Arrafi"
+                  alt="Foto Fauzan Zhahir Arrafi"
                   fill
                   priority
                   sizes="(max-width: 1024px) 100vw, 40vw"
                   className="object-cover object-center grayscale-[35%] saturate-[0.65] contrast-[1.04] transition-[transform,filter] duration-700 group-hover:scale-[1.025] group-hover:grayscale-0"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0d1117]/85 via-transparent to-transparent" />
+                <div className="absolute left-3 top-3 h-3 w-3 border-l border-t border-[#17cbb3]" />
+                <div className="absolute bottom-3 right-3 h-3 w-3 border-b border-r border-[#17cbb3]" />
               </div>
-              <figcaption className="absolute -bottom-5 -left-3 right-6 border border-white/10 bg-[#111820]/95 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur md:-left-8">
+              <figcaption className="absolute -bottom-7 left-3 right-3 border border-white/10 bg-[#111820]/95 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur sm:-bottom-5 sm:-left-3 sm:right-6 md:-left-8">
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <p className="font-mono text-xs text-[#17cbb3]">
@@ -521,9 +523,7 @@ export default function Home() {
                 <p className="mt-16 font-mono text-xs uppercase tracking-[0.16em] text-slate-500">
                   Base
                 </p>
-                <p className="mt-3 text-lg font-medium text-white">
-                  Bandung
-                </p>
+                <p className="mt-3 text-lg font-medium text-white">Bandung</p>
                 <p className="mt-1 text-sm text-slate-400">
                   Jawa Barat, Indonesia
                 </p>
@@ -675,12 +675,12 @@ export default function Home() {
               {projects.map((project, index) => (
                 <motion.article
                   key={project.title}
-                  initial={reduceMotion ? false : "hidden"}
+                  initial={reduceMotion ? false : { opacity: 0, y: 14 }}
                   whileInView="visible"
-                  viewport={{ once: true, amount: 0.15 }}
+                  viewport={{ once: true, amount: 0.06 }}
                   variants={reveal}
                   transition={revealTransition(index * 0.07)}
-                  className={`group flex flex-col border border-white/10 bg-[#0d1117] p-5 transition-[border-color,transform,background-color] duration-300 hover:-translate-y-1 hover:border-[#17cbb3]/45 hover:bg-[#0e141b] md:min-h-[25rem] ${
+                  className={`group min-w-0 overflow-hidden border border-white/10 bg-[#0d1117] p-4 transition-[border-color,transform,background-color] duration-300 hover:-translate-y-1 hover:border-[#17cbb3]/45 hover:bg-[#0e141b] sm:p-5 md:flex md:min-h-[25rem] md:flex-col ${
                     index === 0
                       ? "xl:col-span-7"
                       : index === 1
@@ -689,33 +689,27 @@ export default function Home() {
                   }`}
                 >
                   <div className="border border-white/10 bg-[#111820] font-mono text-[11px] leading-6 text-slate-400">
-                    <div className="flex items-center justify-between border-b border-white/10 px-3 py-2">
+                    <div className="flex min-w-0 items-center justify-between gap-3 border-b border-white/10 px-3 py-2">
                       <div className="flex gap-1.5">
                         <span className="h-1.5 w-1.5 bg-slate-600" />
                         <span className="h-1.5 w-1.5 bg-slate-600" />
                         <span className="h-1.5 w-1.5 bg-[#17cbb3]" />
                       </div>
-                      <span
-                        className={
-                          project.status === "COMPLETED"
-                            ? "text-[#17cbb3]"
-                            : "text-[#17cbb3]"
-                        }
-                      >
+                      <span className="shrink-0 text-[10px] tracking-[0.08em] text-[#17cbb3] sm:text-[11px]">
                         {project.status}
                       </span>
                     </div>
-                    <p className="truncate px-3 py-3">
+                    <p className="truncate px-3 py-2.5 sm:py-3">
                       <span className="text-[#17cbb3]">$</span>{" "}
                       {project.snippet}
                     </p>
                   </div>
-                  <div className="mt-6 flex items-start justify-between gap-4">
-                    <div>
-                      <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-slate-500">
+                  <div className="mt-5 flex min-w-0 items-start justify-between gap-3 sm:mt-6 sm:gap-4">
+                    <div className="min-w-0">
+                      <p className="break-words font-mono text-[10px] uppercase tracking-[0.12em] text-slate-500 sm:tracking-[0.16em]">
                         {project.type}
                       </p>
-                      <h3 className="mt-3 text-balance text-xl font-medium leading-tight tracking-[-0.025em] text-white">
+                      <h3 className="mt-3 break-words text-balance text-xl font-medium leading-tight tracking-[-0.025em] text-white">
                         {project.title}
                       </h3>
                     </div>
@@ -723,18 +717,18 @@ export default function Home() {
                       /0{index + 1}
                     </span>
                   </div>
-                  <p className="mt-4 text-sm leading-6 text-slate-400">
+                  <p className="mt-4 break-words text-sm leading-6 text-slate-400">
                     {project.description}
                   </p>
-                  <div className="mt-auto pt-6">
-                    <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#17cbb3]">
+                  <div className="pt-6 md:mt-auto">
+                    <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-[#17cbb3] sm:tracking-[0.16em]">
                       Role / {project.role}
                     </p>
-                    <div className="mt-3 flex flex-wrap gap-1.5">
+                    <div className="mt-3 flex min-w-0 flex-wrap gap-1.5">
                       {project.tags.map((tag) => (
                         <span
                           key={tag}
-                          className="bg-white/5 px-2 py-1 font-mono text-[10px] text-slate-400"
+                          className="max-w-full break-words bg-white/5 px-2 py-1 font-mono text-[10px] leading-4 text-slate-400"
                         >
                           {tag}
                         </span>

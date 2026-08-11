@@ -18,3 +18,5 @@ dan ganti `NEXT_PUBLIC_SITE_URL` dengan domain produksi.
 npm run build
 npm run start
 ```
+
+Build akan menghasilkan folder `out/` yang bisa diupload ke Hostinger static hosting.
