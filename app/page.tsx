@@ -39,6 +39,7 @@ type Project = {
   description: string;
   tags: string[];
   snippet: string;
+  visitUrl?: string;
 };
 
 type StackCategory = {
@@ -160,6 +161,7 @@ const projects: Project[] = [
       "Hostinger",
     ],
     snippet: "await payment.createOrder({ gateway: 'midtrans' })",
+    visitUrl: "https://acispedia.com/",
   },
   {
     title: "Sistem Informasi Management PKL & Portal PPID Sekolah",
@@ -200,6 +202,7 @@ const projects: Project[] = [
       "Landing page business profile untuk bengkel motor dengan informasi layanan yang jelas dan responsif.",
     tags: ["HTML5", "CSS3", "JavaScript", "Tailwind CSS"],
     snippet: "document.querySelector('#services')?.scrollIntoView()",
+    visitUrl: "https://ajm-bengkel.vercel.app/",
   },
   {
     title: "Web Blog & CMS Admin Dashboard",
@@ -734,6 +737,17 @@ export default function Home() {
                         </span>
                       ))}
                     </div>
+                    {project.visitUrl ? (
+                      <a
+                        href={project.visitUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label={`Kunjungi ${project.title}`}
+                        className="mt-5 inline-flex min-h-11 items-center gap-2 border border-[#17cbb3]/35 px-3 py-2 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-[#17cbb3] transition-[background-color,border-color,color,transform] duration-200 hover:-translate-y-0.5 hover:border-[#17cbb3] hover:bg-[#17cbb3] hover:text-[#0d1117] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#17cbb3] active:translate-y-px"
+                      >
+                        Kunjungi <ArrowUpRight size={14} strokeWidth={2.2} />
+                      </a>
+                    ) : null}
                   </div>
                 </motion.article>
               ))}
