@@ -5,7 +5,6 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   ArrowDownRight,
   ArrowUpRight,
-  Braces,
   CircleDot,
   Code2,
   Database,
@@ -62,30 +61,6 @@ const navItems = [
 const workTabs: { id: WorkTab; label: string; summary: string }[] = [
   { id: "projects", label: "Projects", summary: "7 selected" },
   { id: "stack", label: "Tech Stack", summary: "5 areas" },
-];
-
-const workflow = [
-  {
-    number: "01",
-    title: "Analisis & Database Design",
-    description:
-      "Menganalisis kebutuhan sistem dan menyusun ERD MySQL terstruktur.",
-    icon: Database,
-  },
-  {
-    number: "02",
-    title: "Clean & Scalable Codebase",
-    description:
-      "Logika backend Laravel & komponen frontend Tailwind + Livewire.",
-    icon: Braces,
-  },
-  {
-    number: "03",
-    title: "Integration & Deployment",
-    description:
-      "Integrasi API (Midtrans) & deployment ke Ubuntu VPS / Hostinger.",
-    icon: Server,
-  },
 ];
 
 const stackCategories: StackCategory[] = [
@@ -428,8 +403,9 @@ export default function Home() {
                 dipakai.
               </h1>
               <p className="mt-6 max-w-[58ch] text-pretty text-base leading-7 text-slate-400 md:text-lg">
-                Fauzan Zhahir Arrafi, Full Stack Web Developer untuk PKL dan
-                posisi Junior Web Developer.
+                Fauzan Zhahir Arrafi, Full Stack Web Developer yang membangun
+                aplikasi web dari database, backend, frontend, sampai
+                deployment.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <a
@@ -516,13 +492,13 @@ export default function Home() {
             >
               <SectionLabel>01 / About</SectionLabel>
               <h2 className="mt-5 text-balance text-4xl font-semibold leading-[1.02] tracking-[-0.05em] text-white md:text-5xl">
-                Dari kebutuhan sistem hingga deployment.
+                Full Stack Web Developer yang membangun sistem web end-to-end.
               </h2>
               <p className="mt-6 max-w-[65ch] text-pretty text-base leading-8 text-slate-400 md:text-lg">
-                Full Stack Web Developer yang berfokus pada pengembangan
-                aplikasi web modern berbasis ekosistem Laravel, Livewire,
-                Tailwind CSS, dan MySQL. Berpengalaman merancang platform web
-                secara end-to-end...
+                Saya mengerjakan aplikasi web modern dari perancangan database,
+                logika backend, antarmuka responsif, integrasi API, sampai
+                deployment. Fokus saya adalah membangun codebase yang rapi,
+                mudah dikelola, dan siap dikembangkan.
               </p>
             </motion.div>
 
@@ -571,56 +547,15 @@ export default function Home() {
               >
                 <Layers3 size={25} className="text-[#17cbb3]" />
                 <p className="mt-16 font-mono text-xs uppercase tracking-[0.16em] text-[#17cbb3]">
-                  Target Role
+                  Profile
                 </p>
                 <p className="mt-3 text-lg font-medium text-white">
                   Full Stack Web Developer
                 </p>
                 <p className="mt-1 text-sm text-slate-400">
-                  PKL / Junior Web Developer
+                  Backend, frontend, database, deployment
                 </p>
               </motion.div>
-            </div>
-          </div>
-        </section>
-
-        <section className="border-y border-white/10 bg-[#10161d] px-5 pb-32 pt-24 md:px-10 md:pb-40 md:pt-32">
-          <div className="mx-auto max-w-7xl">
-            <div className="max-w-2xl">
-              <h2 className="text-balance text-4xl font-semibold leading-[1.02] tracking-[-0.05em] text-white md:text-5xl">
-                Cara saya mengerjakan produk web.
-              </h2>
-            </div>
-            <div className="mt-14 grid gap-4 md:grid-cols-2 lg:grid-cols-[1.35fr_0.85fr_0.85fr]">
-              {workflow.map((step, index) => {
-                const Icon = step.icon;
-                return (
-                  <motion.article
-                    key={step.number}
-                    initial={reduceMotion ? false : "hidden"}
-                    whileInView="visible"
-                    viewport={{ once: true, amount: 0.2 }}
-                    variants={reveal}
-                    transition={revealTransition(index * 0.09)}
-                    className={`relative overflow-hidden border border-white/10 p-6 transition-colors duration-300 hover:border-[#17cbb3]/35 ${index === 0 ? "bg-[#17cbb3]/10 md:row-span-1" : "bg-[#0d1117]"}`}
-                  >
-                    <div className="flex items-start justify-between">
-                      <Icon size={25} className="text-[#17cbb3]" />
-                      <span className="font-mono text-sm text-slate-500">
-                        {step.number}
-                      </span>
-                    </div>
-                    <div className={index === 0 ? "mt-24" : "mt-16"}>
-                      <h3 className="text-xl font-medium tracking-tight text-white">
-                        {step.title}
-                      </h3>
-                      <p className="mt-3 max-w-sm text-sm leading-6 text-slate-400">
-                        {step.description}
-                      </p>
-                    </div>
-                  </motion.article>
-                );
-              })}
             </div>
           </div>
         </section>
@@ -867,8 +802,8 @@ export default function Home() {
               </div>
               <div className="lg:col-span-4">
                 <p className="text-base leading-7 text-slate-400">
-                  Terbuka untuk kesempatan PKL, kolaborasi, dan posisi Junior
-                  Web Developer.
+                  Terbuka untuk kolaborasi, project web, maintenance, dan
+                  pengembangan produk digital.
                 </p>
                 <a
                   href="mailto:fauzanzha09@gmail.com"
