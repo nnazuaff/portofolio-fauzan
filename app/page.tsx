@@ -38,9 +38,14 @@ type Project = {
   status: "COMPLETED" | "IN PROGRESS";
   description: string;
   tags: string[];
-  snippet: string;
+  image?: {
+    src: string;
+    alt: string;
+  };
   visitUrl?: string;
 };
+
+type WorkTab = "projects" | "stack";
 
 type StackCategory = {
   label: string;
@@ -51,8 +56,12 @@ type StackCategory = {
 
 const navItems = [
   { label: "About", href: "#about" },
-  { label: "Stack", href: "#stack" },
-  { label: "Projects", href: "#projects" },
+  { label: "Work", href: "#work" },
+];
+
+const workTabs: { id: WorkTab; label: string; summary: string }[] = [
+  { id: "projects", label: "Projects", summary: "7 selected" },
+  { id: "stack", label: "Tech Stack", summary: "5 areas" },
 ];
 
 const workflow = [
@@ -145,7 +154,7 @@ const stackCategories: StackCategory[] = [
 
 const projects: Project[] = [
   {
-    title: "AcisPedia — SMM Panel Website",
+    title: "Acis Pedia — SMM Panel Website",
     type: "Commercial Web Platform",
     role: "Full Stack",
     status: "COMPLETED",
@@ -160,8 +169,25 @@ const projects: Project[] = [
       "Ubuntu VPS",
       "Hostinger",
     ],
-    snippet: "await payment.createOrder({ gateway: 'midtrans' })",
+    image: {
+      src: "/project-acispedia.png",
+      alt: "Screenshot halaman beranda Acis Pedia SMM Panel",
+    },
     visitUrl: "https://acispedia.com/",
+  },
+  {
+    title: "Portfolio Fauzan Zhahir Arrafi",
+    type: "Personal Portfolio",
+    role: "Frontend Developer",
+    status: "COMPLETED",
+    description:
+      "Website portfolio pribadi untuk menampilkan profil, tech stack, project pilihan, dan kanal kontak dalam satu halaman responsif.",
+    tags: ["Next.js", "TypeScript", "Tailwind CSS", "Framer Motion"],
+    image: {
+      src: "/project-portfolio.png",
+      alt: "Screenshot halaman utama portfolio Fauzan Zhahir Arrafi",
+    },
+    visitUrl: "#top",
   },
   {
     title: "Sistem Informasi Management PKL & Portal PPID Sekolah",
@@ -171,7 +197,6 @@ const projects: Project[] = [
     description:
       "Sistem institusional untuk pengelolaan PKL dan portal informasi publik sekolah dengan panel administrasi terstruktur.",
     tags: ["Laravel", "Filament", "Livewire", "Tailwind", "MySQL"],
-    snippet: "Student::query()->with('internship')->latest()",
   },
   {
     title: "Webstore E-Commerce Platform",
@@ -181,7 +206,6 @@ const projects: Project[] = [
     description:
       "Platform e-commerce yang berfokus pada arsitektur backend, transaksi, katalog, dan integrasi payment gateway.",
     tags: ["Laravel", "Livewire", "Tailwind", "MySQL", "Payment Gateway API"],
-    snippet: "CartService::checkout($customer, $items)",
   },
   {
     title: "Mindhug — Web Curhat Anonim",
@@ -191,7 +215,10 @@ const projects: Project[] = [
     description:
       "Aplikasi sosial interaktif untuk berbagi cerita secara anonim dengan pengalaman antarmuka yang responsif.",
     tags: ["Laravel", "Livewire", "Alpine.js", "Tailwind", "MySQL"],
-    snippet: "post({ anonymous: true, body: story })",
+    image: {
+      src: "/project-mindhug.png",
+      alt: "Screenshot halaman utama MindHug",
+    },
   },
   {
     title: "Landing Page AJM — Bengkel Motor",
@@ -200,8 +227,11 @@ const projects: Project[] = [
     status: "COMPLETED",
     description:
       "Landing page business profile untuk bengkel motor dengan informasi layanan yang jelas dan responsif.",
-    tags: ["HTML5", "CSS3", "JavaScript", "Tailwind CSS"],
-    snippet: "document.querySelector('#services')?.scrollIntoView()",
+    tags: ["Next.js", "React", "Tailwind CSS"],
+    image: {
+      src: "/project-ajm-bengkel.png",
+      alt: "Screenshot landing page AJM Bengkel Motor",
+    },
     visitUrl: "https://ajm-bengkel.vercel.app/",
   },
   {
@@ -212,7 +242,6 @@ const projects: Project[] = [
     description:
       "Blog dan dashboard CMS untuk mengelola konten melalui workflow admin berbasis Laravel.",
     tags: ["Laravel", "PHP", "Blade", "MySQL", "Tailwind CSS"],
-    snippet: "Route::resource('posts', PostController::class)",
   },
 ];
 
@@ -244,6 +273,7 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [navbarHidden, setNavbarHidden] = useState(false);
   const [activeSection, setActiveSection] = useState("top");
+  const [activeWorkTab, setActiveWorkTab] = useState<WorkTab>("projects");
   const contactRef = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
   const { scrollYProgress: contactProgress } = useScroll({
@@ -259,7 +289,7 @@ export default function Home() {
   });
 
   useEffect(() => {
-    const sections = ["top", "about", "stack", "projects", "contact"]
+    const sections = ["top", "about", "work", "contact"]
       .map((id) => document.getElementById(id))
       .filter((section): section is HTMLElement => Boolean(section));
 
@@ -403,7 +433,7 @@ export default function Home() {
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <a
-                  href="#projects"
+                  href="#work"
                   className="inline-flex items-center gap-2 bg-[#17cbb3] px-5 py-3 text-sm font-semibold text-[#0d1117] transition-transform duration-200 hover:-translate-y-0.5 active:translate-y-px"
                 >
                   Lihat Proyek <ArrowDownRight size={17} strokeWidth={2.2} />
@@ -596,68 +626,7 @@ export default function Home() {
         </section>
 
         <section
-          id="stack"
-          className="px-5 pb-32 pt-28 md:px-10 md:pb-40 md:pt-36"
-        >
-          <div className="mx-auto max-w-7xl">
-            <motion.div
-              initial={reduceMotion ? false : "hidden"}
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.25 }}
-              variants={reveal}
-              transition={revealTransition()}
-              className="max-w-2xl"
-            >
-              <SectionLabel>02 / Tech Stack</SectionLabel>
-              <h2 className="mt-5 text-balance text-4xl font-semibold leading-[1.02] tracking-[-0.05em] text-white md:text-5xl">
-                Ekosistem yang saya gunakan.
-              </h2>
-            </motion.div>
-            <div className="mt-14 grid gap-px border-y border-white/10 lg:grid-cols-2">
-              {stackCategories.map((category, index) => {
-                const Icon = category.icon;
-                return (
-                  <motion.article
-                    key={category.label}
-                    initial={reduceMotion ? false : "hidden"}
-                    whileInView="visible"
-                    viewport={{ once: true, amount: 0.15 }}
-                    variants={reveal}
-                    transition={revealTransition(index * 0.07)}
-                    className="group border-b border-white/10 py-8 transition-colors duration-300 hover:bg-[#17cbb3]/[0.025] lg:px-7 lg:[&:nth-child(odd)]:border-r lg:[&:nth-last-child(-n+2)]:border-b-0"
-                  >
-                    <div className="flex items-start gap-4">
-                      <div className="border border-[#17cbb3]/30 bg-[#17cbb3]/10 p-2.5 text-[#17cbb3]">
-                        <Icon size={20} strokeWidth={1.8} />
-                      </div>
-                      <div>
-                        <h3 className="text-xl font-medium text-white">
-                          {category.label}
-                        </h3>
-                        <p className="mt-1 font-mono text-xs text-slate-500">
-                          {category.detail}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="mt-6 flex flex-wrap gap-2">
-                      {category.skills.map((skill) => (
-                        <span
-                          key={skill}
-                          className="border border-white/10 px-2.5 py-1.5 text-xs text-slate-300 transition-colors duration-300 group-hover:border-[#17cbb3]/30"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </motion.article>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-
-        <section
-          id="projects"
+          id="work"
           className="border-t border-white/10 bg-[#10161d] px-5 pb-32 pt-28 md:px-10 md:pb-40 md:pt-36"
         >
           <div className="mx-auto max-w-7xl">
@@ -667,91 +636,211 @@ export default function Home() {
               viewport={{ once: true, amount: 0.25 }}
               variants={reveal}
               transition={revealTransition()}
-              className="max-w-3xl"
+              className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end"
             >
-              <SectionLabel>03 / Selected Work</SectionLabel>
-              <h2 className="mt-5 text-balance text-4xl font-semibold leading-[1.02] tracking-[-0.05em] text-white md:text-5xl">
-                Enam proyek, dari komersial hingga institusional.
-              </h2>
+              <div className="max-w-3xl">
+                <SectionLabel>02 / Stack & Projects</SectionLabel>
+                <h2 className="mt-5 text-balance text-4xl font-semibold leading-[1.02] tracking-[-0.05em] text-white md:text-5xl">
+                  Stack teknis dan tujuh project pilihan.
+                </h2>
+              </div>
+              <div
+                role="tablist"
+                aria-label="Stack dan project"
+                className="grid w-full grid-cols-2 border border-white/10 bg-[#0d1117] p-1 sm:w-[25rem]"
+              >
+                {workTabs.map((tab) => {
+                  const selected = activeWorkTab === tab.id;
+
+                  return (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      role="tab"
+                      id={`work-tab-${tab.id}`}
+                      aria-selected={selected}
+                      aria-controls={`work-panel-${tab.id}`}
+                      onClick={() => setActiveWorkTab(tab.id)}
+                      className={`min-h-11 px-3 py-2 text-left transition-[background-color,color] duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#17cbb3] ${
+                        selected
+                          ? "bg-[#17cbb3] text-[#0d1117]"
+                          : "text-slate-400 hover:bg-white/5 hover:text-white"
+                      }`}
+                    >
+                      <span className="block text-sm font-semibold">
+                        {tab.label}
+                      </span>
+                      <span
+                        className={`mt-1 block font-mono text-[10px] uppercase tracking-[0.14em] ${
+                          selected ? "text-[#0d1117]/65" : "text-slate-600"
+                        }`}
+                      >
+                        {tab.summary}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
             </motion.div>
-            <div className="mt-14 grid gap-4 md:grid-cols-2 xl:grid-cols-12">
-              {projects.map((project, index) => (
-                <motion.article
-                  key={project.title}
-                  initial={reduceMotion ? false : { opacity: 0, y: 14 }}
-                  whileInView="visible"
-                  viewport={{ once: true, amount: 0.06 }}
-                  variants={reveal}
-                  transition={revealTransition(index * 0.07)}
-                  className={`group min-w-0 overflow-hidden border border-white/10 bg-[#0d1117] p-4 transition-[border-color,transform,background-color] duration-300 hover:-translate-y-1 hover:border-[#17cbb3]/45 hover:bg-[#0e141b] sm:p-5 md:flex md:min-h-[25rem] md:flex-col ${
-                    index === 0
-                      ? "xl:col-span-7"
-                      : index === 1
-                        ? "xl:col-span-5"
-                        : "xl:col-span-6"
-                  }`}
-                >
-                  <div className="border border-white/10 bg-[#111820] font-mono text-[11px] leading-6 text-slate-400">
-                    <div className="flex min-w-0 items-center justify-between gap-3 border-b border-white/10 px-3 py-2">
-                      <div className="flex gap-1.5">
-                        <span className="h-1.5 w-1.5 bg-slate-600" />
-                        <span className="h-1.5 w-1.5 bg-slate-600" />
-                        <span className="h-1.5 w-1.5 bg-[#17cbb3]" />
+
+            {activeWorkTab === "projects" ? (
+              <div
+                role="tabpanel"
+                id="work-panel-projects"
+                aria-labelledby="work-tab-projects"
+                className="mt-14 grid gap-4 md:grid-cols-2 xl:grid-cols-12"
+              >
+                {projects.map((project, index) => (
+                  <motion.article
+                    key={project.title}
+                    initial={reduceMotion ? false : { opacity: 0, y: 14 }}
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.06 }}
+                    variants={reveal}
+                    transition={revealTransition(index * 0.07)}
+                    className={`group min-w-0 overflow-hidden border border-white/10 bg-[#0d1117] p-4 transition-[border-color,transform,background-color] duration-300 hover:-translate-y-1 hover:border-[#17cbb3]/45 hover:bg-[#0e141b] sm:p-5 md:flex md:min-h-[24rem] md:flex-col ${
+                      index === 0
+                        ? "xl:col-span-7"
+                        : index === 1
+                          ? "xl:col-span-5"
+                          : "xl:col-span-6"
+                    }`}
+                  >
+                    {project.image ? (
+                      <div className="overflow-hidden border border-white/10 bg-[#111820]">
+                        <div className="flex min-w-0 items-center justify-between gap-3 border-b border-white/10 px-3 py-2 font-mono">
+                          <div className="flex gap-1.5">
+                            <span className="h-1.5 w-1.5 bg-slate-600" />
+                            <span className="h-1.5 w-1.5 bg-slate-600" />
+                            <span className="h-1.5 w-1.5 bg-[#17cbb3]" />
+                          </div>
+                          <span className="shrink-0 text-[10px] tracking-[0.08em] text-[#17cbb3] sm:text-[11px]">
+                            {project.status}
+                          </span>
+                        </div>
+                        <div className="relative aspect-[1920/963] bg-[#05080c]">
+                          <Image
+                            src={project.image.src}
+                            alt={project.image.alt}
+                            fill
+                            sizes="(max-width: 768px) calc(100vw - 40px), (max-width: 1280px) calc(50vw - 48px), 58vw"
+                            className="object-contain object-center opacity-95 saturate-[0.9] transition-transform duration-700 group-hover:scale-[1.01]"
+                          />
+                        </div>
                       </div>
-                      <span className="shrink-0 text-[10px] tracking-[0.08em] text-[#17cbb3] sm:text-[11px]">
-                        {project.status}
+                    ) : (
+                      <div className="flex min-h-11 min-w-0 items-center justify-between gap-3 border border-white/10 bg-[#111820] px-3 py-2 font-mono">
+                        <div className="flex gap-1.5">
+                          <span className="h-1.5 w-1.5 bg-slate-600" />
+                          <span className="h-1.5 w-1.5 bg-slate-600" />
+                          <span className="h-1.5 w-1.5 bg-[#17cbb3]" />
+                        </div>
+                        <span className="shrink-0 text-[10px] tracking-[0.08em] text-[#17cbb3] sm:text-[11px]">
+                          {project.status}
+                        </span>
+                      </div>
+                    )}
+                    <div className="mt-5 flex min-w-0 items-start justify-between gap-3 sm:mt-6 sm:gap-4">
+                      <div className="min-w-0">
+                        <p className="break-words font-mono text-[10px] uppercase tracking-[0.12em] text-slate-500 sm:tracking-[0.16em]">
+                          {project.type}
+                        </p>
+                        <h3 className="mt-3 break-words text-balance text-xl font-medium leading-tight tracking-[-0.025em] text-white">
+                          {project.title}
+                        </h3>
+                      </div>
+                      <span className="font-mono text-xs tabular-nums text-slate-600 transition-colors duration-300 group-hover:text-[#17cbb3]">
+                        /0{index + 1}
                       </span>
                     </div>
-                    <p className="truncate px-3 py-2.5 sm:py-3">
-                      <span className="text-[#17cbb3]">$</span>{" "}
-                      {project.snippet}
+                    <p className="mt-4 break-words text-sm leading-6 text-slate-400">
+                      {project.description}
                     </p>
-                  </div>
-                  <div className="mt-5 flex min-w-0 items-start justify-between gap-3 sm:mt-6 sm:gap-4">
-                    <div className="min-w-0">
-                      <p className="break-words font-mono text-[10px] uppercase tracking-[0.12em] text-slate-500 sm:tracking-[0.16em]">
-                        {project.type}
+                    <div className="pt-6 md:mt-auto">
+                      <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-[#17cbb3] sm:tracking-[0.16em]">
+                        Role / {project.role}
                       </p>
-                      <h3 className="mt-3 break-words text-balance text-xl font-medium leading-tight tracking-[-0.025em] text-white">
-                        {project.title}
-                      </h3>
-                    </div>
-                    <span className="font-mono text-xs tabular-nums text-slate-600 transition-colors duration-300 group-hover:text-[#17cbb3]">
-                      /0{index + 1}
-                    </span>
-                  </div>
-                  <p className="mt-4 break-words text-sm leading-6 text-slate-400">
-                    {project.description}
-                  </p>
-                  <div className="pt-6 md:mt-auto">
-                    <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-[#17cbb3] sm:tracking-[0.16em]">
-                      Role / {project.role}
-                    </p>
-                    <div className="mt-3 flex min-w-0 flex-wrap gap-1.5">
-                      {project.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="max-w-full break-words bg-white/5 px-2 py-1 font-mono text-[10px] leading-4 text-slate-400"
+                      <div className="mt-3 flex min-w-0 flex-wrap gap-1.5">
+                        {project.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="max-w-full break-words bg-white/5 px-2 py-1 font-mono text-[10px] leading-4 text-slate-400"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                      {project.visitUrl ? (
+                        <a
+                          href={project.visitUrl}
+                          target={
+                            project.visitUrl.startsWith("http")
+                              ? "_blank"
+                              : undefined
+                          }
+                          rel={
+                            project.visitUrl.startsWith("http")
+                              ? "noreferrer"
+                              : undefined
+                          }
+                          aria-label={`Live Demo ${project.title}`}
+                          className="mt-5 inline-flex min-h-11 items-center gap-2 border border-[#17cbb3]/35 px-3 py-2 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-[#17cbb3] transition-[background-color,border-color,color,transform] duration-200 hover:-translate-y-0.5 hover:border-[#17cbb3] hover:bg-[#17cbb3] hover:text-[#0d1117] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#17cbb3] active:translate-y-px"
                         >
-                          {tag}
-                        </span>
-                      ))}
+                          Live Demo <ArrowUpRight size={14} strokeWidth={2.2} />
+                        </a>
+                      ) : null}
                     </div>
-                    {project.visitUrl ? (
-                      <a
-                        href={project.visitUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        aria-label={`Kunjungi ${project.title}`}
-                        className="mt-5 inline-flex min-h-11 items-center gap-2 border border-[#17cbb3]/35 px-3 py-2 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-[#17cbb3] transition-[background-color,border-color,color,transform] duration-200 hover:-translate-y-0.5 hover:border-[#17cbb3] hover:bg-[#17cbb3] hover:text-[#0d1117] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#17cbb3] active:translate-y-px"
-                      >
-                        Kunjungi <ArrowUpRight size={14} strokeWidth={2.2} />
-                      </a>
-                    ) : null}
-                  </div>
-                </motion.article>
-              ))}
-            </div>
+                  </motion.article>
+                ))}
+              </div>
+            ) : (
+              <div
+                role="tabpanel"
+                id="work-panel-stack"
+                aria-labelledby="work-tab-stack"
+                className="mt-14 grid gap-px border-y border-white/10 lg:grid-cols-2"
+              >
+                {stackCategories.map((category, index) => {
+                  const Icon = category.icon;
+
+                  return (
+                    <motion.article
+                      key={category.label}
+                      initial={reduceMotion ? false : "hidden"}
+                      whileInView="visible"
+                      viewport={{ once: true, amount: 0.15 }}
+                      variants={reveal}
+                      transition={revealTransition(index * 0.07)}
+                      className="group border-b border-white/10 py-8 transition-colors duration-300 hover:bg-[#17cbb3]/[0.025] lg:px-7 lg:[&:nth-child(odd)]:border-r lg:[&:nth-last-child(-n+2)]:border-b-0"
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className="border border-[#17cbb3]/30 bg-[#17cbb3]/10 p-2.5 text-[#17cbb3]">
+                          <Icon size={20} strokeWidth={1.8} />
+                        </div>
+                        <div>
+                          <h3 className="text-xl font-medium text-white">
+                            {category.label}
+                          </h3>
+                          <p className="mt-1 font-mono text-xs text-slate-500">
+                            {category.detail}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="mt-6 flex flex-wrap gap-2">
+                        {category.skills.map((skill) => (
+                          <span
+                            key={skill}
+                            className="border border-white/10 px-2.5 py-1.5 text-xs text-slate-300 transition-colors duration-300 group-hover:border-[#17cbb3]/30"
+                          >
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
+                    </motion.article>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </section>
 
@@ -771,7 +860,7 @@ export default function Home() {
               className="grid gap-10 lg:grid-cols-12 lg:items-end"
             >
               <div className="lg:col-span-8">
-                <SectionLabel>04 / Contact</SectionLabel>
+                <SectionLabel>03 / Contact</SectionLabel>
                 <h2 className="mt-5 max-w-3xl text-balance text-5xl font-semibold leading-[0.98] tracking-[-0.055em] text-white md:text-6xl">
                   Mari bangun sesuatu yang berguna.
                 </h2>
@@ -837,7 +926,7 @@ export default function Home() {
         <footer className="border-t border-white/10 px-5 py-7 md:px-10">
           <div className="mx-auto flex max-w-7xl flex-col gap-3 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
             <p>© 2026 Fauzan Zhahir Arrafi</p>
-            <p className="font-mono">DESIGNED & BUILT WITH PURPOSE</p>
+            
           </div>
         </footer>
       </main>
