@@ -207,7 +207,7 @@ const projects: Project[] = [
       src: "/project-ajm-bengkel.png",
       alt: "Screenshot landing page AJM Bengkel Motor",
     },
-    visitUrl: "https://ajm-bengkel.vercel.app/",
+    visitUrl: "https://ajmbengkel.id/",
   },
   {
     title: "Web Blog & CMS Admin Dashboard",
