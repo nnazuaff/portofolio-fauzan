@@ -205,7 +205,7 @@ const projects: Project[] = [
     tags: ["Next.js", "React", "Tailwind CSS"],
     image: {
       src: "/project-ajm-bengkel.png",
-      alt: "Screenshot landing page AJM Bengkel Motor",
+      alt: "Screenshot desktop live website Ahad Jaya Motor di Katapang",
     },
     visitUrl: "https://ajmbengkel.id/",
   },
