@@ -3,7 +3,22 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
+  --background: 45 100% 98%;
+  --foreground: 221 38% 15%;
+  --border: 220 20% 78%;
+  --input: 220 20% 78%;
+  --ring: 172 80% 44%;
+  --primary: 172 80% 44%;
+  --primary-foreground: 222 38% 15%;
+  --secondary: 194 43% 95%;
+  --secondary-foreground: 221 38% 15%;
+  --muted: 46 100% 89%;
+  --muted-foreground: 220 15% 38%;
+  --accent: 5 75% 94%;
+  --accent-foreground: 5 61% 38%;
+  --destructive: 0 68% 43%;
+  --destructive-foreground: 0 0% 100%;
 }
 
 * {
@@ -14,7 +29,7 @@ html,
 body {
   margin: 0;
   min-height: 100%;
-  background: #0d1117;
+  background: #fffdf7;
 }
 
 html {
@@ -22,9 +37,17 @@ html {
 }
 
 body {
-  font-family: var(--font-geist-sans), sans-serif;
-  color: #e6edf3;
+  color: #172033;
+  font-family: "Nunito Sans Variable", sans-serif;
   text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+.font-display,
+button {
+  font-family: "Gabarito Variable", sans-serif;
 }
 
 a {
@@ -38,7 +61,7 @@ a {
 }
 
 :focus-visible {
-  outline: 2px solid #17cbb3;
+  outline: 3px solid #17cbb3;
   outline-offset: 4px;
 }
 
@@ -53,15 +76,58 @@ a {
 .grain::after {
   position: fixed;
   inset: 0;
-  z-index: 50;
+  z-index: 60;
   pointer-events: none;
   content: "";
-  opacity: 0.035;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E");
+  opacity: 0.18;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' fill='%23fffdf7'/%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.12'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+  mix-blend-mode: multiply;
+}
+
+@layer components {
+  .paper-card {
+    @apply border-2 border-ink/10 bg-white shadow-[5px_7px_0_rgba(23,32,51,0.10)];
+  }
+
+  .print-shadow {
+    box-shadow: 4px 5px 0 rgba(23, 32, 51, 0.12), 0 14px 35px rgba(23, 32, 51, 0.09);
+  }
+
+  .tape-strip {
+    @apply absolute z-10 h-7 w-24 bg-sun/90;
+    box-shadow: inset 0 0 0 1px rgba(23, 32, 51, 0.05);
+    clip-path: polygon(3% 7%, 97% 0, 100% 88%, 4% 100%, 0 18%);
+  }
+
+  .scrap-rotation {
+    transform: rotate(var(--scrap-rotate, 0deg));
+  }
+}
+
+@media (max-width: 767px) {
+  .scrap-rotation {
+    transform: none !important;
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .scrap-rotation {
+    transform: none !important;
   }
 }

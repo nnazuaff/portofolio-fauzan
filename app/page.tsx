@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useState, type KeyboardEvent, type ReactNode } from "react";
 import {
   ArrowDownRight,
   ArrowUpRight,
@@ -10,25 +10,21 @@ import {
   Database,
   Github,
   Globe2,
+  Instagram,
   Layers3,
   Mail,
   MapPin,
-  Menu,
   Network,
   Send,
   Server,
   Terminal,
   Workflow,
-  X,
   type LucideIcon,
 } from "lucide-react";
-import {
-  motion,
-  useMotionValueEvent,
-  useReducedMotion,
-  useScroll,
-} from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { ReactLenis } from "lenis/react";
+
+import { AnimatedNavFramer } from "@/components/ui/navigation-menu";
 
 type Project = {
   title: string;
@@ -52,11 +48,6 @@ type StackCategory = {
   skills: string[];
   detail: string;
 };
-
-const navItems = [
-  { label: "About", href: "#about" },
-  { label: "Work", href: "#work" },
-];
 
 const workTabs: { id: WorkTab; label: string; summary: string }[] = [
   { id: "projects", label: "Projects", summary: "7 selected" },
@@ -238,56 +229,57 @@ const reveal = {
 
 function SectionLabel({ children }: { children: ReactNode }) {
   return (
-    <p className="font-mono text-xs font-medium tracking-[0.08em] text-[#17cbb3]">
+    <p className="font-mono text-xs font-semibold uppercase tracking-[0.12em] text-tosca-dark">
       {children}
     </p>
   );
 }
 
+const projectLayouts = [
+  "xl:col-span-7 md:-rotate-1",
+  "xl:col-span-5 md:rotate-1",
+  "xl:col-span-5 md:rotate-[0.7deg]",
+  "xl:col-span-7 md:-rotate-[0.6deg]",
+  "xl:col-span-7 md:rotate-[0.5deg]",
+  "xl:col-span-5 md:-rotate-1",
+  "xl:col-span-6 md:rotate-[0.6deg]",
+];
+
+const stackRotations = [
+  "md:-rotate-[0.7deg]",
+  "md:rotate-[0.6deg]",
+  "md:rotate-[0.4deg]",
+  "md:-rotate-[0.5deg]",
+  "md:rotate-[0.7deg]",
+];
+
 export default function Home() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [navbarHidden, setNavbarHidden] = useState(false);
-  const [activeSection, setActiveSection] = useState("top");
   const [activeWorkTab, setActiveWorkTab] = useState<WorkTab>("projects");
-  const contactRef = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
-  const { scrollYProgress: contactProgress } = useScroll({
-    target: contactRef,
-    offset: ["start end", "end end"],
-  });
-
-  useMotionValueEvent(contactProgress, "change", (value) => {
-    const shouldHide = value > 0.2;
-    setNavbarHidden((current) =>
-      current === shouldHide ? current : shouldHide,
-    );
-  });
-
-  useEffect(() => {
-    const sections = ["top", "about", "work", "contact"]
-      .map((id) => document.getElementById(id))
-      .filter((section): section is HTMLElement => Boolean(section));
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-
-        if (visible) setActiveSection(visible.target.id);
-      },
-      { rootMargin: "-20% 0px -60%", threshold: [0, 0.2, 0.5] },
-    );
-
-    sections.forEach((section) => observer.observe(section));
-    return () => observer.disconnect();
-  }, []);
 
   const revealTransition = (delay = 0) => ({
-    duration: reduceMotion ? 0 : 0.65,
+    duration: reduceMotion ? 0 : 0.58,
     delay: reduceMotion ? 0 : delay,
     ease: "easeOut" as const,
   });
+
+  const handleTabKeyDown = (
+    event: KeyboardEvent<HTMLButtonElement>,
+    currentIndex: number,
+  ) => {
+    let nextIndex = currentIndex;
+    if (event.key === "ArrowRight") nextIndex = (currentIndex + 1) % workTabs.length;
+    else if (event.key === "ArrowLeft")
+      nextIndex = (currentIndex - 1 + workTabs.length) % workTabs.length;
+    else if (event.key === "Home") nextIndex = 0;
+    else if (event.key === "End") nextIndex = workTabs.length - 1;
+    else return;
+
+    event.preventDefault();
+    const nextTab = workTabs[nextIndex];
+    setActiveWorkTab(nextTab.id);
+    document.getElementById(`work-tab-${nextTab.id}`)?.focus();
+  };
 
   return (
     <ReactLenis
@@ -300,188 +292,104 @@ export default function Home() {
     >
       <a
         href="#content"
-        className="fixed left-4 top-4 z-50 -translate-y-24 bg-[#17cbb3] px-4 py-2 text-sm font-semibold text-[#0d1117] transition-transform focus:translate-y-0"
+        className="fixed left-4 top-4 z-[70] -translate-y-24 rounded-full bg-tosca px-4 py-2 font-display text-sm font-bold text-ink transition-transform focus:translate-y-0 motion-reduce:transition-none"
       >
         Lewati ke konten
       </a>
       <main
         id="content"
-        className="grain min-h-screen overflow-hidden bg-[#0d1117] text-slate-100 selection:bg-[#17cbb3] selection:text-[#0d1117]"
+        className="grain min-h-screen overflow-hidden bg-paper text-ink selection:bg-tosca selection:text-ink"
       >
-        <nav
-          className={`fixed left-1/2 top-4 z-40 w-[calc(100%-2rem)] max-w-5xl -translate-x-1/2 border border-white/10 bg-[#111820]/85 px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_16px_50px_rgba(5,12,18,0.24)] backdrop-blur-xl transition-all duration-500 md:w-[calc(100%-3rem)] ${
-            navbarHidden
-              ? "pointer-events-none -translate-y-24 opacity-0"
-              : "translate-y-0 opacity-100"
-          }`}
-          aria-label="Primary navigation"
-        >
-          <div className="flex items-center justify-between gap-4">
-            <a
-              href="#top"
-              className="font-mono text-sm font-bold tracking-tight text-white"
-              onClick={() => setMenuOpen(false)}
-            >
-              Fauzan Zhahir Arrafi
-            </a>
-            <div className="hidden items-center gap-6 md:flex">
-              {navItems.map((item) => (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  aria-current={
-                    activeSection === item.href.slice(1)
-                      ? "location"
-                      : undefined
-                  }
-                  className={`relative py-1 text-sm transition-colors duration-200 after:absolute after:-bottom-1 after:left-0 after:h-px after:bg-[#17cbb3] after:transition-all ${
-                    activeSection === item.href.slice(1)
-                      ? "text-white after:w-full"
-                      : "text-slate-400 after:w-0 hover:text-white hover:after:w-full"
-                  }`}
-                >
-                  {item.label}
-                </a>
-              ))}
-            </div>
-            <a
-              href="#contact"
-              className="hidden items-center gap-2 bg-[#17cbb3] px-3 py-2 text-xs font-semibold text-[#0d1117] transition-transform duration-200 hover:-translate-y-0.5 active:translate-y-px md:inline-flex"
-            >
-              Contact <ArrowUpRight size={14} strokeWidth={2} />
-            </a>
-            <button
-              type="button"
-              onClick={() => setMenuOpen((open) => !open)}
-              className="inline-flex p-1 text-slate-200 md:hidden"
-              aria-label={menuOpen ? "Close navigation" : "Open navigation"}
-              aria-expanded={menuOpen}
-            >
-              {menuOpen ? <X size={21} /> : <Menu size={21} />}
-            </button>
-          </div>
-          {menuOpen && (
-            <div className="mt-3 border-t border-white/10 pt-3 md:hidden">
-              <div className="flex flex-col gap-1">
-                {[...navItems, { label: "Contact", href: "#contact" }].map(
-                  (item) => (
-                    <a
-                      key={item.href}
-                      href={item.href}
-                      onClick={() => setMenuOpen(false)}
-                      className="px-2 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white"
-                    >
-                      {item.label}
-                    </a>
-                  ),
-                )}
-              </div>
-            </div>
-          )}
-        </nav>
+        <AnimatedNavFramer />
 
         <section
           id="top"
-          className="relative flex min-h-[100dvh] items-start border-b border-white/10 px-5 pb-28 pt-24 md:px-10 lg:items-center lg:pb-24 lg:pt-20"
+          className="relative flex min-h-[100dvh] items-center border-b-2 border-ink/10 px-5 pb-28 pt-24 md:px-10 lg:pb-24 lg:pt-20"
         >
-          <div className="absolute inset-0 opacity-25 [background-image:linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] [background-size:3rem_3rem] [mask-image:linear-gradient(to_bottom,black,transparent_90%)]" />
-          <div className="absolute -right-32 top-20 h-[28rem] w-[28rem] rounded-full bg-[#17cbb3]/[0.06] blur-[8rem]" />
-          <div className="relative mx-auto grid w-full max-w-7xl items-center gap-10 lg:grid-cols-12">
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 opacity-50 [background-image:linear-gradient(rgba(23,32,51,0.045)_1px,transparent_1px),linear-gradient(90deg,rgba(23,32,51,0.045)_1px,transparent_1px)] [background-size:2.5rem_2.5rem] [mask-image:linear-gradient(to_bottom,black,transparent_88%)]"
+          />
+          <div aria-hidden="true" className="absolute -left-10 top-28 h-24 w-24 rotate-12 rounded-[42%] bg-sun/70" />
+          <div aria-hidden="true" className="absolute -right-20 top-24 h-64 w-64 rounded-full bg-sky/80" />
+
+          <div className="relative mx-auto grid w-full max-w-7xl items-center gap-12 lg:grid-cols-12 lg:gap-8">
             <motion.div
               initial={reduceMotion ? false : "hidden"}
               animate="visible"
               variants={reveal}
-              transition={revealTransition(0.1)}
+              transition={revealTransition(0.08)}
               className="lg:col-span-7"
             >
-              <SectionLabel>
-                Full Stack Web Developer · Bandung, Indonesia
-              </SectionLabel>
-              <h1 className="mt-6 max-w-4xl text-balance text-5xl font-semibold leading-[0.96] tracking-[-0.06em] text-white sm:text-6xl md:text-7xl lg:text-[5.25rem]">
-                Membangun web yang{" "}
-                <span className="text-[#17cbb3]">terstruktur,</span> siap
-                dipakai.
+              <div className="inline-flex -rotate-1 items-center gap-2 border-2 border-ink/10 bg-sun px-4 py-2 print-shadow md:-ml-3">
+                <span aria-hidden="true" className="h-2 w-2 rounded-full bg-tosca" />
+                <SectionLabel>Full Stack Web Developer · Bandung, Indonesia</SectionLabel>
+              </div>
+              <h1 className="mt-7 max-w-4xl text-balance font-display text-5xl font-bold leading-[0.98] tracking-[-0.035em] sm:text-6xl md:text-7xl lg:text-[4.8rem]">
+                Bikin web yang <span className="relative text-tosca-dark">rapi,<span aria-hidden="true" className="absolute -bottom-1 left-0 h-1 w-full -rotate-1 rounded-full bg-tosca/25" /></span> enak dipakai.
               </h1>
-              <p className="mt-6 max-w-[58ch] text-pretty text-base leading-7 text-slate-400 md:text-lg">
-                Fauzan Zhahir Arrafi, Full Stack Web Developer yang membangun
-                aplikasi web dari database, backend, frontend, sampai
-                deployment.
+              <p className="mt-6 max-w-[52ch] text-pretty text-base leading-7 text-ink/75 md:text-lg">
+                Hai, saya Fauzan. Saya bikin web dari database sampai tampilan, lalu memastikan semuanya benar-benar enak dipakai.
               </p>
-              <div className="mt-8 flex flex-wrap gap-3">
+              <div className="mt-6 flex flex-wrap items-center gap-4">
                 <a
                   href="#work"
-                  className="inline-flex items-center gap-2 bg-[#17cbb3] px-5 py-3 text-sm font-semibold text-[#0d1117] transition-transform duration-200 hover:-translate-y-0.5 active:translate-y-px"
+                  className="inline-flex min-h-12 items-center gap-2 rounded-full bg-tosca px-6 py-3 font-display text-sm font-bold text-ink print-shadow transition-transform hover:-translate-y-0.5 active:translate-y-px motion-reduce:transition-none"
                 >
-                  Lihat Proyek <ArrowDownRight size={17} strokeWidth={2.2} />
+                  Lihat Proyek <ArrowDownRight size={17} strokeWidth={2.3} />
                 </a>
                 <a
                   href="mailto:fauzanzha09@gmail.com"
-                  className="inline-flex items-center gap-2 px-1 py-3 text-sm font-medium text-slate-300 underline decoration-white/20 underline-offset-8 transition-colors duration-200 hover:text-[#17cbb3] hover:decoration-[#17cbb3]"
+                  className="inline-flex min-h-12 items-center gap-2 rounded-full border-2 border-ink/15 bg-white px-5 py-3 font-display text-sm font-bold text-ink transition-colors hover:border-tosca hover:text-tosca-dark"
                 >
-                  Kirim Email <Mail size={16} strokeWidth={2} />
+                  Kirim Email <Mail size={16} strokeWidth={2.2} />
                 </a>
               </div>
             </motion.div>
+
             <motion.figure
               initial={reduceMotion ? false : "hidden"}
               animate="visible"
               variants={reveal}
-              transition={revealTransition(0.25)}
-              className="group relative order-first mx-auto mb-16 block w-full max-w-sm border border-white/15 bg-[#111820] p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_20px_60px_rgba(3,9,14,0.34)] sm:max-w-md lg:order-none lg:mb-0 lg:col-span-5 lg:ml-auto"
+              transition={revealTransition(0.2)}
+              className="group relative mx-auto mb-8 w-full max-w-[22rem] rotate-0 bg-white p-3 pb-20 print-shadow md:max-w-md md:rotate-2 lg:col-span-5 lg:mb-0 lg:ml-auto"
             >
-              <div className="relative aspect-[4/5] overflow-hidden border border-white/10 bg-[#0d1117]">
+              <span aria-hidden="true" className="tape-strip -top-3 left-1/2 -translate-x-1/2 -rotate-3" />
+              <div className="relative aspect-[4/5] overflow-hidden bg-sky">
                 <Image
                   src="/profile-fauzan.jpg"
                   alt="Foto Fauzan Zhahir Arrafi"
                   fill
                   priority
                   sizes="(max-width: 1024px) 100vw, 40vw"
-                  className="object-cover object-center grayscale-[35%] saturate-[0.65] contrast-[1.04] transition-[transform,filter] duration-700 group-hover:scale-[1.025] group-hover:grayscale-0"
+                  className="object-cover object-center brightness-[1.12] contrast-[0.94] saturate-[0.88] transition-transform duration-700 group-hover:scale-[1.02] motion-reduce:transition-none"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0d1117]/85 via-transparent to-transparent" />
-                <div className="absolute left-3 top-3 h-3 w-3 border-l border-t border-[#17cbb3]" />
-                <div className="absolute bottom-3 right-3 h-3 w-3 border-b border-r border-[#17cbb3]" />
               </div>
-              <figcaption className="absolute -bottom-7 left-3 right-3 border border-white/10 bg-[#111820]/95 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur sm:-bottom-5 sm:-left-3 sm:right-6 md:-left-8">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="font-mono text-xs text-[#17cbb3]">
-                      Fauzan Zhahir Arrafi
-                    </p>
-                    <p className="mt-2 text-sm leading-6 text-slate-300">
-                      Siswa SMK · Rekayasa Perangkat Lunak (RPL)
-                    </p>
-                  </div>
-                  <MapPin
-                    size={18}
-                    strokeWidth={1.7}
-                    className="mt-0.5 shrink-0 text-[#17cbb3]"
-                  />
+              <figcaption className="absolute inset-x-5 bottom-4 flex items-end justify-between gap-4">
+                <div>
+                  <p className="font-display text-lg font-bold">Fauzan Zhahir Arrafi</p>
+                  <p className="mt-1 text-sm text-ink/65">Siswa SMK · Rekayasa Perangkat Lunak (RPL)</p>
                 </div>
+                <MapPin size={20} className="shrink-0 text-tosca-dark" aria-hidden="true" />
               </figcaption>
+              <span aria-hidden="true" className="absolute -right-12 bottom-24 hidden -rotate-6 font-display text-sm font-bold text-tosca-dark lg:block">based in Bandung ↙</span>
             </motion.figure>
           </div>
-          <div className="absolute bottom-0 left-0 w-full overflow-hidden border-t border-white/10 bg-[#0d1117]/95 py-4">
-            <div
-              className={`flex w-max items-center gap-8 font-mono text-xs tracking-[0.16em] text-slate-500 ${reduceMotion ? "" : "animate-[marquee_28s_linear_infinite]"}`}
-            >
+
+          <div className="absolute bottom-0 left-0 w-full overflow-hidden border-y-2 border-ink/10 bg-sun/70 py-3 [mask-image:linear-gradient(to_right,transparent,black_3rem,black_calc(100%-3rem),transparent)]">
+            <div className={`flex w-max items-center gap-8 font-mono text-xs font-semibold tracking-[0.12em] text-ink/65 ${reduceMotion ? "" : "animate-[marquee_28s_linear_infinite]"}`}>
               {[...marqueeItems, ...marqueeItems].map((item, index) => (
-                <span
-                  key={`${item}-${index}`}
-                  className="flex items-center gap-8 whitespace-nowrap"
-                >
-                  {item} <CircleDot size={13} className="text-[#17cbb3]" />
+                <span key={`${item}-${index}`} aria-hidden={index >= marqueeItems.length} className="flex items-center gap-8 whitespace-nowrap">
+                  {item} <CircleDot size={13} className="text-tosca-dark" aria-hidden="true" />
                 </span>
               ))}
             </div>
           </div>
         </section>
 
-        <section
-          id="about"
-          className="px-5 pb-32 pt-28 md:px-10 md:pb-40 md:pt-36"
-        >
-          <div className="mx-auto max-w-7xl">
+        <section id="about" className="relative px-5 pb-28 pt-28 md:px-10 md:pb-40 md:pt-36">
+          <div aria-hidden="true" className="absolute right-[8%] top-20 h-16 w-40 -rotate-6 bg-sky/70" />
+          <div className="relative mx-auto max-w-7xl">
             <motion.div
               initial={reduceMotion ? false : "hidden"}
               whileInView="visible"
@@ -491,79 +399,61 @@ export default function Home() {
               className="max-w-3xl"
             >
               <SectionLabel>01 / About</SectionLabel>
-              <h2 className="mt-5 text-balance text-4xl font-semibold leading-[1.02] tracking-[-0.05em] text-white md:text-5xl">
+              <h2 className="mt-5 text-balance font-display text-4xl font-bold leading-[1.04] tracking-[-0.025em] md:text-6xl">
                 Full Stack Web Developer yang membangun sistem web end-to-end.
               </h2>
-              <p className="mt-6 max-w-[65ch] text-pretty text-base leading-8 text-slate-400 md:text-lg">
-                Saya mengerjakan aplikasi web modern dari perancangan database,
-                logika backend, antarmuka responsif, integrasi API, sampai
-                deployment. Fokus saya adalah membangun codebase yang rapi,
-                mudah dikelola, dan siap dikembangkan.
+              <p className="mt-6 max-w-[65ch] text-pretty text-base leading-8 text-ink/68 md:text-lg">
+                Saya mengerjakan aplikasi web modern dari perancangan database, logika backend, antarmuka responsif, integrasi API, sampai deployment. Fokus saya adalah membangun codebase yang rapi, mudah dikelola, dan siap dikembangkan.
               </p>
             </motion.div>
 
-            <div className="mt-14 grid gap-px overflow-hidden border border-white/10 bg-white/10 md:grid-cols-2 lg:grid-cols-4">
-              <motion.div
+            <div className="mt-16 grid items-start gap-6 md:grid-cols-12 md:gap-5">
+              <motion.article
                 initial={reduceMotion ? false : "hidden"}
                 whileInView="visible"
                 viewport={{ once: true, amount: 0.2 }}
                 variants={reveal}
                 transition={revealTransition(0.05)}
-                className="relative overflow-hidden bg-[#111820] p-7 md:col-span-2"
+                className="paper-card relative rounded-[2rem_1rem_2.5rem_1.25rem] bg-sun p-7 md:col-span-7 md:-rotate-1 md:p-9"
               >
-                <div className="absolute -right-16 -top-16 h-40 w-40 rounded-full bg-[#17cbb3]/10 blur-3xl" />
-                <Terminal size={25} className="text-[#17cbb3]" />
-                <p className="mt-16 font-mono text-xs uppercase tracking-[0.16em] text-slate-500">
-                  Focus
-                </p>
-                <p className="mt-3 max-w-md text-balance text-2xl font-medium tracking-[-0.025em] text-white">
-                  Web modern yang dapat dikelola, dikembangkan, dan dipelihara.
-                </p>
-              </motion.div>
-              <motion.div
+                <span aria-hidden="true" className="tape-strip -top-4 left-8 rotate-2" />
+                <Terminal size={28} className="text-tosca-dark" aria-hidden="true" />
+                <p className="mt-12 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-ink/65">Focus</p>
+                <p className="mt-3 max-w-xl text-balance font-display text-2xl font-bold md:text-3xl">Web modern yang dapat dikelola, dikembangkan, dan dipelihara.</p>
+              </motion.article>
+
+              <motion.article
                 initial={reduceMotion ? false : "hidden"}
                 whileInView="visible"
                 viewport={{ once: true, amount: 0.2 }}
                 variants={reveal}
                 transition={revealTransition(0.12)}
-                className="bg-[#0d1117] p-7"
+                className="paper-card rounded-[1.2rem_2.5rem_1.4rem_2rem] bg-sky p-7 md:col-span-5 md:mt-12 md:rotate-1"
               >
-                <Globe2 size={25} className="text-[#17cbb3]" />
-                <p className="mt-16 font-mono text-xs uppercase tracking-[0.16em] text-slate-500">
-                  Base
-                </p>
-                <p className="mt-3 text-lg font-medium text-white">Bandung</p>
-                <p className="mt-1 text-sm text-slate-400">
-                  Jawa Barat, Indonesia
-                </p>
-              </motion.div>
-              <motion.div
+                <Globe2 size={28} className="text-tosca-dark" aria-hidden="true" />
+                <p className="mt-12 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-ink/65">Base</p>
+                <p className="mt-3 font-display text-2xl font-bold">Bandung</p>
+                <p className="mt-1 text-sm text-ink/65">Jawa Barat, Indonesia</p>
+              </motion.article>
+
+              <motion.article
                 initial={reduceMotion ? false : "hidden"}
                 whileInView="visible"
                 viewport={{ once: true, amount: 0.2 }}
                 variants={reveal}
                 transition={revealTransition(0.19)}
-                className="bg-[#17cbb3]/10 p-7"
+                className="paper-card rounded-[2.4rem_1.3rem_1.8rem_1rem] p-7 md:col-span-8 md:col-start-3 md:-mt-1 md:rotate-[0.6deg]"
               >
-                <Layers3 size={25} className="text-[#17cbb3]" />
-                <p className="mt-16 font-mono text-xs uppercase tracking-[0.16em] text-[#17cbb3]">
-                  Profile
-                </p>
-                <p className="mt-3 text-lg font-medium text-white">
-                  Full Stack Web Developer
-                </p>
-                <p className="mt-1 text-sm text-slate-400">
-                  Backend, frontend, database, deployment
-                </p>
-              </motion.div>
+                <Layers3 size={28} className="text-tosca-dark" aria-hidden="true" />
+                <p className="mt-10 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-tosca-dark">Profile</p>
+                <p className="mt-3 font-display text-2xl font-bold">Full Stack Web Developer</p>
+                <p className="mt-1 text-sm text-ink/65">Backend, frontend, database, deployment</p>
+              </motion.article>
             </div>
           </div>
         </section>
 
-        <section
-          id="work"
-          className="border-t border-white/10 bg-[#10161d] px-5 pb-32 pt-28 md:px-10 md:pb-40 md:pt-36"
-        >
+        <section id="work" className="border-y-2 border-ink/10 bg-sky/55 px-5 pb-28 pt-28 md:px-10 md:pb-40 md:pt-36">
           <div className="mx-auto max-w-7xl">
             <motion.div
               initial={reduceMotion ? false : "hidden"}
@@ -575,18 +465,11 @@ export default function Home() {
             >
               <div className="max-w-3xl">
                 <SectionLabel>02 / Stack & Projects</SectionLabel>
-                <h2 className="mt-5 text-balance text-4xl font-semibold leading-[1.02] tracking-[-0.05em] text-white md:text-5xl">
-                  Stack teknis dan tujuh project pilihan.
-                </h2>
+                <h2 className="mt-5 text-balance font-display text-4xl font-bold leading-[1.04] tracking-[-0.025em] md:text-6xl">Stack teknis dan tujuh project pilihan.</h2>
               </div>
-              <div
-                role="tablist"
-                aria-label="Stack dan project"
-                className="grid w-full grid-cols-2 border border-white/10 bg-[#0d1117] p-1 sm:w-[25rem]"
-              >
-                {workTabs.map((tab) => {
+              <div role="tablist" aria-label="Stack dan project" className="grid w-full grid-cols-2 rounded-full border-2 border-ink/15 bg-paper p-1.5 print-shadow sm:w-[25rem]">
+                {workTabs.map((tab, index) => {
                   const selected = activeWorkTab === tab.id;
-
                   return (
                     <button
                       key={tab.id}
@@ -595,23 +478,13 @@ export default function Home() {
                       id={`work-tab-${tab.id}`}
                       aria-selected={selected}
                       aria-controls={`work-panel-${tab.id}`}
+                      tabIndex={selected ? 0 : -1}
                       onClick={() => setActiveWorkTab(tab.id)}
-                      className={`min-h-11 px-3 py-2 text-left transition-[background-color,color] duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#17cbb3] ${
-                        selected
-                          ? "bg-[#17cbb3] text-[#0d1117]"
-                          : "text-slate-400 hover:bg-white/5 hover:text-white"
-                      }`}
+                      onKeyDown={(event) => handleTabKeyDown(event, index)}
+                      className={`min-h-12 rounded-full px-4 py-2 text-left transition-colors motion-reduce:transition-none ${selected ? "bg-tosca text-ink" : "text-ink/65 hover:bg-tosca/10 hover:text-ink"}`}
                     >
-                      <span className="block text-sm font-semibold">
-                        {tab.label}
-                      </span>
-                      <span
-                        className={`mt-1 block font-mono text-[10px] uppercase tracking-[0.14em] ${
-                          selected ? "text-[#0d1117]/65" : "text-slate-600"
-                        }`}
-                      >
-                        {tab.summary}
-                      </span>
+                      <span className="block font-display text-sm font-bold">{tab.label}</span>
+                      <span className={`mt-0.5 block font-mono text-[10px] uppercase tracking-[0.12em] ${selected ? "text-ink" : "text-ink/65"}`}>{tab.summary}</span>
                     </button>
                   );
                 })}
@@ -619,12 +492,7 @@ export default function Home() {
             </motion.div>
 
             {activeWorkTab === "projects" ? (
-              <div
-                role="tabpanel"
-                id="work-panel-projects"
-                aria-labelledby="work-tab-projects"
-                className="mt-14 grid gap-4 md:grid-cols-2 xl:grid-cols-12"
-              >
+              <div role="tabpanel" id="work-panel-projects" aria-labelledby="work-tab-projects" className="mt-14 grid gap-7 md:grid-cols-2 xl:grid-cols-12 xl:gap-8">
                 {projects.map((project, index) => (
                   <motion.article
                     key={project.title}
@@ -632,96 +500,44 @@ export default function Home() {
                     whileInView="visible"
                     viewport={{ once: true, amount: 0.06 }}
                     variants={reveal}
-                    transition={revealTransition(index * 0.07)}
-                    className={`group min-w-0 overflow-hidden border border-white/10 bg-[#0d1117] p-4 transition-[border-color,transform,background-color] duration-300 hover:-translate-y-1 hover:border-[#17cbb3]/45 hover:bg-[#0e141b] sm:p-5 md:flex md:min-h-[24rem] md:flex-col ${
-                      index === 0
-                        ? "xl:col-span-7"
-                        : index === 1
-                          ? "xl:col-span-5"
-                          : "xl:col-span-6"
-                    }`}
+                    transition={revealTransition(index * 0.06)}
+                    className={`paper-card group min-w-0 overflow-hidden rounded-[1.4rem_0.8rem_1.8rem_1rem] p-4 transition-[transform,box-shadow] duration-300 hover:-translate-y-1 sm:p-5 md:flex md:min-h-[25rem] md:flex-col motion-reduce:transition-none ${projectLayouts[index]}`}
                   >
-                    {project.image ? (
-                      <div className="overflow-hidden border border-white/10 bg-[#111820]">
-                        <div className="flex min-w-0 items-center justify-between gap-3 border-b border-white/10 px-3 py-2 font-mono">
-                          <div className="flex gap-1.5">
-                            <span className="h-1.5 w-1.5 bg-slate-600" />
-                            <span className="h-1.5 w-1.5 bg-slate-600" />
-                            <span className="h-1.5 w-1.5 bg-[#17cbb3]" />
-                          </div>
-                          <span className="shrink-0 text-[10px] tracking-[0.08em] text-[#17cbb3] sm:text-[11px]">
-                            {project.status}
-                          </span>
-                        </div>
-                        <div className="relative aspect-[1920/963] bg-[#05080c]">
-                          <Image
-                            src={project.image.src}
-                            alt={project.image.alt}
-                            fill
-                            sizes="(max-width: 768px) calc(100vw - 40px), (max-width: 1280px) calc(50vw - 48px), 58vw"
-                            className="object-contain object-center opacity-95 saturate-[0.9] transition-transform duration-700 group-hover:scale-[1.01]"
-                          />
-                        </div>
+                    <div className="overflow-hidden border-2 border-ink/10 bg-paper">
+                      <div className="flex min-h-10 min-w-0 items-center justify-between gap-3 border-b-2 border-ink/10 bg-sun/60 px-3 py-2 font-mono">
+                        <div className="flex gap-1.5" aria-hidden="true"><span className="h-2 w-2 rounded-full bg-ink/25" /><span className="h-2 w-2 rounded-full bg-ink/25" /><span className="h-2 w-2 rounded-full bg-tosca" /></div>
+                        <span className="shrink-0 text-[10px] font-semibold tracking-[0.08em] text-tosca-dark sm:text-[11px]">{project.status}</span>
                       </div>
-                    ) : (
-                      <div className="flex min-h-11 min-w-0 items-center justify-between gap-3 border border-white/10 bg-[#111820] px-3 py-2 font-mono">
-                        <div className="flex gap-1.5">
-                          <span className="h-1.5 w-1.5 bg-slate-600" />
-                          <span className="h-1.5 w-1.5 bg-slate-600" />
-                          <span className="h-1.5 w-1.5 bg-[#17cbb3]" />
+                      {project.image ? (
+                        <div className="relative aspect-[1920/963] bg-white">
+                          <Image src={project.image.src} alt={project.image.alt} fill sizes="(max-width: 768px) calc(100vw - 40px), (max-width: 1280px) calc(50vw - 48px), 58vw" className="object-contain object-center transition-transform duration-700 group-hover:scale-[1.01] motion-reduce:transition-none" />
                         </div>
-                        <span className="shrink-0 text-[10px] tracking-[0.08em] text-[#17cbb3] sm:text-[11px]">
-                          {project.status}
-                        </span>
-                      </div>
-                    )}
-                    <div className="mt-5 flex min-w-0 items-start justify-between gap-3 sm:mt-6 sm:gap-4">
-                      <div className="min-w-0">
-                        <p className="break-words font-mono text-[10px] uppercase tracking-[0.12em] text-slate-500 sm:tracking-[0.16em]">
-                          {project.type}
-                        </p>
-                        <h3 className="mt-3 break-words text-balance text-xl font-medium leading-tight tracking-[-0.025em] text-white">
-                          {project.title}
-                        </h3>
-                      </div>
-                      <span className="font-mono text-xs tabular-nums text-slate-600 transition-colors duration-300 group-hover:text-[#17cbb3]">
-                        /0{index + 1}
-                      </span>
+                      ) : (
+                        <div aria-hidden="true" className="grid aspect-[1920/963] place-items-center bg-sky/45"><Code2 className="h-10 w-10 text-ink/15" /></div>
+                      )}
                     </div>
-                    <p className="mt-4 break-words text-sm leading-6 text-slate-400">
-                      {project.description}
-                    </p>
+                    <div className="mt-5 flex min-w-0 items-start justify-between gap-3 sm:mt-6">
+                      <div className="min-w-0">
+                        <p className="break-words font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-ink/65">{project.type}</p>
+                        <h3 className="mt-3 break-words text-balance font-display text-xl font-bold leading-tight md:text-2xl">{project.title}</h3>
+                      </div>
+                      <span className="font-mono text-xs tabular-nums text-tosca-dark">/0{index + 1}</span>
+                    </div>
+                    <p className="mt-4 break-words text-sm leading-6 text-ink/65">{project.description}</p>
                     <div className="pt-6 md:mt-auto">
-                      <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-[#17cbb3] sm:tracking-[0.16em]">
-                        Role / {project.role}
-                      </p>
+                      <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-tosca-dark">Role / {project.role}</p>
                       <div className="mt-3 flex min-w-0 flex-wrap gap-1.5">
-                        {project.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="max-w-full break-words bg-white/5 px-2 py-1 font-mono text-[10px] leading-4 text-slate-400"
-                          >
-                            {tag}
-                          </span>
-                        ))}
+                        {project.tags.map((tag) => <span key={tag} className="max-w-full break-words rounded-full border border-ink/10 bg-sky/55 px-2.5 py-1 font-mono text-[10px] leading-4 text-ink/65">{tag}</span>)}
                       </div>
                       {project.visitUrl ? (
                         <a
                           href={project.visitUrl}
-                          target={
-                            project.visitUrl.startsWith("http")
-                              ? "_blank"
-                              : undefined
-                          }
-                          rel={
-                            project.visitUrl.startsWith("http")
-                              ? "noreferrer"
-                              : undefined
-                          }
+                          target={project.visitUrl.startsWith("http") ? "_blank" : undefined}
+                          rel={project.visitUrl.startsWith("http") ? "noreferrer" : undefined}
                           aria-label={`Live Demo ${project.title}`}
-                          className="mt-5 inline-flex min-h-11 items-center gap-2 border border-[#17cbb3]/35 px-3 py-2 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-[#17cbb3] transition-[background-color,border-color,color,transform] duration-200 hover:-translate-y-0.5 hover:border-[#17cbb3] hover:bg-[#17cbb3] hover:text-[#0d1117] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#17cbb3] active:translate-y-px"
+                          className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-full border-2 border-tosca px-4 py-2 font-display text-xs font-bold text-tosca-dark transition-colors hover:bg-tosca hover:text-ink"
                         >
-                          Live Demo <ArrowUpRight size={14} strokeWidth={2.2} />
+                          Live Demo <ArrowUpRight size={14} strokeWidth={2.3} />
                         </a>
                       ) : null}
                     </div>
@@ -729,15 +545,9 @@ export default function Home() {
                 ))}
               </div>
             ) : (
-              <div
-                role="tabpanel"
-                id="work-panel-stack"
-                aria-labelledby="work-tab-stack"
-                className="mt-14 grid gap-px border-y border-white/10 lg:grid-cols-2"
-              >
+              <div role="tabpanel" id="work-panel-stack" aria-labelledby="work-tab-stack" className="mt-14 grid gap-7 md:grid-cols-2">
                 {stackCategories.map((category, index) => {
                   const Icon = category.icon;
-
                   return (
                     <motion.article
                       key={category.label}
@@ -745,31 +555,15 @@ export default function Home() {
                       whileInView="visible"
                       viewport={{ once: true, amount: 0.15 }}
                       variants={reveal}
-                      transition={revealTransition(index * 0.07)}
-                      className="group border-b border-white/10 py-8 transition-colors duration-300 hover:bg-[#17cbb3]/[0.025] lg:px-7 lg:[&:nth-child(odd)]:border-r lg:[&:nth-last-child(-n+2)]:border-b-0"
+                      transition={revealTransition(index * 0.06)}
+                      className={`paper-card rounded-[1.6rem_1rem_2rem_1.2rem] p-7 ${index % 2 === 0 ? "bg-white" : "bg-sun/65"} ${stackRotations[index]}`}
                     >
                       <div className="flex items-start gap-4">
-                        <div className="border border-[#17cbb3]/30 bg-[#17cbb3]/10 p-2.5 text-[#17cbb3]">
-                          <Icon size={20} strokeWidth={1.8} />
-                        </div>
-                        <div>
-                          <h3 className="text-xl font-medium text-white">
-                            {category.label}
-                          </h3>
-                          <p className="mt-1 font-mono text-xs text-slate-500">
-                            {category.detail}
-                          </p>
-                        </div>
+                        <div className="rounded-full bg-tosca p-3 text-ink"><Icon size={21} strokeWidth={2} aria-hidden="true" /></div>
+                        <div><h3 className="font-display text-2xl font-bold">{category.label}</h3><p className="mt-1 font-mono text-xs text-ink/65">{category.detail}</p></div>
                       </div>
-                      <div className="mt-6 flex flex-wrap gap-2">
-                        {category.skills.map((skill) => (
-                          <span
-                            key={skill}
-                            className="border border-white/10 px-2.5 py-1.5 text-xs text-slate-300 transition-colors duration-300 group-hover:border-[#17cbb3]/30"
-                          >
-                            {skill}
-                          </span>
-                        ))}
+                      <div className="mt-7 flex flex-wrap gap-2">
+                        {category.skills.map((skill) => <span key={skill} className="rounded-full border-2 border-ink/10 bg-paper px-3 py-1.5 text-xs font-semibold text-ink/70">{skill}</span>)}
                       </div>
                     </motion.article>
                   );
@@ -779,113 +573,57 @@ export default function Home() {
           </div>
         </section>
 
-        <section
-          ref={contactRef}
-          id="contact"
-          className="relative px-5 pb-32 pt-28 md:px-10 md:pb-40 md:pt-36"
-        >
-          <div className="absolute bottom-0 left-1/3 h-80 w-80 rounded-full bg-[#17cbb3]/[0.04] blur-[7rem]" />
-          <div className="mx-auto max-w-7xl border-y border-white/10 py-16 md:py-24">
+        <section id="contact" className="relative px-5 pb-28 pt-28 md:px-10 md:pb-40 md:pt-36">
+          <div aria-hidden="true" className="absolute -left-20 bottom-20 h-60 w-60 rounded-full bg-sun/70" />
+          <div className="relative mx-auto max-w-7xl">
             <motion.div
               initial={reduceMotion ? false : "hidden"}
               whileInView="visible"
-              viewport={{ once: true, amount: 0.3 }}
+              viewport={{ once: true, amount: 0.25 }}
               variants={reveal}
               transition={revealTransition()}
-              className="grid gap-10 lg:grid-cols-12 lg:items-end"
+              className="paper-card relative overflow-visible rounded-[2.5rem_1.2rem_2rem_1.5rem] bg-sun p-7 md:p-12 lg:p-16"
             >
-              <div className="lg:col-span-8">
-                <SectionLabel>03 / Contact</SectionLabel>
-                <h2 className="mt-5 max-w-3xl text-balance text-5xl font-semibold leading-[0.98] tracking-[-0.055em] text-white md:text-6xl">
-                  Mari bangun sesuatu yang berguna.
-                </h2>
-              </div>
-              <div className="lg:col-span-4">
-                <p className="text-base leading-7 text-slate-400">
-                  Terbuka untuk kolaborasi, project web, maintenance, dan
-                  pengembangan produk digital.
-                </p>
-                <a
-                  href="mailto:fauzanzha09@gmail.com"
-                  className="mt-7 inline-flex items-center gap-2 bg-[#17cbb3] px-5 py-3 text-sm font-semibold text-[#0d1117] transition-transform duration-200 hover:-translate-y-0.5 active:translate-y-px"
-                >
-                  Mulai Percakapan <Send size={16} strokeWidth={2.2} />
-                </a>
+              <span aria-hidden="true" className="tape-strip -top-4 right-12 -rotate-3" />
+              <div className="grid gap-10 lg:grid-cols-12 lg:items-end">
+                <div className="lg:col-span-8">
+                  <SectionLabel>03 / Contact</SectionLabel>
+                  <h2 className="mt-5 max-w-3xl text-balance font-display text-5xl font-bold leading-[1] tracking-[-0.03em] md:text-7xl">Mari bangun sesuatu yang berguna.</h2>
+                </div>
+                <div className="lg:col-span-4">
+                  <p className="text-base leading-7 text-ink/68">Terbuka untuk kolaborasi, project web, maintenance, dan pengembangan produk digital.</p>
+                  <a href="mailto:fauzanzha09@gmail.com" className="mt-7 inline-flex min-h-12 items-center gap-2 rounded-full bg-tosca px-6 py-3 font-display text-sm font-bold text-ink print-shadow transition-transform hover:-translate-y-0.5 active:translate-y-px motion-reduce:transition-none">Mulai Percakapan <Send size={16} strokeWidth={2.3} /></a>
+                </div>
               </div>
             </motion.div>
-            <div className="mt-16 grid gap-px border border-white/10 bg-white/10 md:grid-cols-12">
-              <a
-                href="mailto:fauzanzha09@gmail.com"
-                className="group bg-[#0d1117] p-5 transition-colors duration-300 hover:bg-[#17cbb3]/10 md:col-span-5"
-              >
-                <Mail size={19} className="text-[#17cbb3]" />
-                <p className="mt-8 font-mono text-[10px] uppercase tracking-[0.16em] text-slate-500">
-                  Email
-                </p>
-                <p className="mt-2 text-sm text-slate-200">
-                  fauzanzha09@gmail.com
-                </p>
+
+            <div className="mt-10 grid gap-5 md:grid-cols-12">
+              <a href="mailto:fauzanzha09@gmail.com" className="paper-card group rounded-[1.5rem_1rem_2rem_1.2rem] bg-white p-6 transition-transform hover:-translate-y-1 motion-reduce:transition-none md:col-span-5 md:-rotate-1">
+                <Mail size={21} className="text-tosca-dark" aria-hidden="true" /><p className="mt-8 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-ink/65">Email</p><p className="mt-2 break-all font-display text-base font-bold">fauzanzha09@gmail.com</p>
               </a>
-              <a
-                href="https://github.com/nnazuaff"
-                target="_blank"
-                rel="noreferrer"
-                className="group bg-[#0d1117] p-5 transition-colors duration-300 hover:bg-[#17cbb3]/10 md:col-span-4"
-              >
-                <Github size={19} className="text-[#17cbb3]" />
-                <p className="mt-8 font-mono text-[10px] uppercase tracking-[0.16em] text-slate-500">
-                  GitHub
-                </p>
-                <p className="mt-2 text-sm text-slate-200">
-                  github.com/nnazuaff
-                </p>
+              <a href="https://github.com/nnazuaff" target="_blank" rel="noreferrer" className="paper-card group rounded-[1rem_2rem_1.3rem_1.7rem] bg-sky p-6 transition-transform hover:-translate-y-1 motion-reduce:transition-none md:col-span-4 md:rotate-1">
+                <Github size={21} className="text-tosca-dark" aria-hidden="true" /><p className="mt-8 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-ink/65">GitHub</p><p className="mt-2 font-display text-base font-bold">github.com/nnazuaff</p>
               </a>
-              <a
-                href="https://wa.me/6282210513791"
-                target="_blank"
-                rel="noreferrer"
-                className="group bg-[#0d1117] p-5 transition-colors duration-300 hover:bg-[#17cbb3]/10 md:col-span-3"
-              >
-                <Send size={19} className="text-[#17cbb3]" />
-                <p className="mt-8 font-mono text-[10px] uppercase tracking-[0.16em] text-slate-500">
-                  WhatsApp
-                </p>
-                <p className="mt-2 text-sm text-slate-200">
-                  WA: +6282210513791
-                </p>
+              <a href="https://www.instagram.com/nnzuaf" target="_blank" rel="noreferrer" aria-label="Instagram @nnzuaf" className="paper-card group rounded-[2rem_1.2rem_1.7rem_1rem] bg-white p-6 transition-transform hover:-translate-y-1 motion-reduce:transition-none md:col-span-3 md:-rotate-[0.5deg]">
+                <Instagram size={21} className="text-tosca-dark" aria-hidden="true" /><p className="mt-8 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-ink/65">Instagram</p><p className="mt-2 font-display text-base font-bold">@nnzuaf</p>
               </a>
             </div>
           </div>
         </section>
 
-        <footer className="border-t border-white/10 px-5 py-7 md:px-10">
-          <div className="mx-auto flex max-w-7xl flex-col gap-3 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+        <footer className="border-t-2 border-ink/10 bg-white/55 px-5 py-7 md:px-10">
+          <div className="mx-auto flex max-w-7xl flex-col gap-2 text-xs font-semibold text-ink/65 sm:flex-row sm:items-center sm:justify-between">
             <p>© 2026 Fauzan Zhahir Arrafi</p>
-            
+            <p className="font-display text-tosca-dark">Built with care in Bandung.</p>
           </div>
         </footer>
       </main>
       <style jsx global>{`
         @keyframes marquee {
-          from {
-            transform: translateX(0);
-          }
-          to {
-            transform: translateX(-50%);
-          }
+          from { transform: translateX(0); }
+          to { transform: translateX(-50%); }
         }
-        html {
-          scroll-behavior: auto;
-        }
-        @media (prefers-reduced-motion: reduce) {
-          *,
-          *::before,
-          *::after {
-            animation-duration: 0.01ms !important;
-            animation-iteration-count: 1 !important;
-            scroll-behavior: auto !important;
-          }
-        }
+        html { scroll-behavior: auto; }
       `}</style>
     </ReactLenis>
   );
