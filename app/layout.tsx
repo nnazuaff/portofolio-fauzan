@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
-import { GeistMono } from "geist/font/mono";
-import "@fontsource-variable/gabarito";
-import "@fontsource-variable/nunito-sans";
+import localFont from "next/font/local";
 import "./globals.css";
+
+const jakarta = localFont({
+  src: "../public/fonts/plus-jakarta-sans-latin.woff2",
+  variable: "--font-jakarta",
+  display: "swap",
+  weight: "200 800",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -44,7 +49,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" className={GeistMono.variable}>
+    <html lang="id" className={jakarta.variable}>
       <body className="font-sans">{children}</body>
     </html>
   );

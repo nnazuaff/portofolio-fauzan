@@ -41,9 +41,9 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ['"Nunito Sans Variable"', "sans-serif"],
-        display: ['"Gabarito Variable"', "sans-serif"],
-        mono: ["var(--font-geist-mono)", "monospace"],
+        sans: ["var(--font-jakarta)", "sans-serif"],
+        display: ["var(--font-jakarta)", "sans-serif"],
+        mono: ["monospace"],
       },
     },
   },
