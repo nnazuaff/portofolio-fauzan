@@ -101,17 +101,19 @@ export function SectionNav() {
 
   return (
     <div className="nav-slot">
-      <nav aria-label="Navigasi portofolio" className={`section-nav${active !== "top" ? " is-docked" : ""}`}>
+      <motion.nav layout={reduced ? false : "position"} initial={false}
+        transition={{ layout: { duration: 0.65, ease: [0.22, 1, 0.36, 1] } }}
+        aria-label="Navigasi portofolio" className={`section-nav${active !== "top" ? " is-docked" : ""}`}>
         {[["top", "Home"], ["about", "Tentang"], ["work", "Proyek"], ["stack", "Keahlian"], ["contact", "Kontak"]].map(([id, label]) => (
           <a key={id} href={`#${id}`} aria-current={active === id ? "location" : undefined}>
             {active === id && (reduced ? <span className="nav-indicator" data-nav-indicator="" aria-hidden="true" /> : (
               <motion.span layoutId="portfolio-nav-indicator" className="nav-indicator" data-nav-indicator="" aria-hidden="true"
-                initial={false} transition={{ type: "spring", stiffness: 420, damping: 36 }} />
+                initial={false} transition={{ type: "spring", stiffness: 300, damping: 30, mass: 0.8 }} />
             ))}
             <span className="nav-label">{label}</span>
           </a>
         ))}
-      </nav>
+      </motion.nav>
     </div>
   );
 }
