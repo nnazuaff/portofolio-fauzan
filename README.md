@@ -18,7 +18,7 @@ Buka http://localhost:3000. Klik layar atau tekan Enter/Space untuk masuk. Splas
 - Video lokal: `public/media/ambient.mp4`. Poster: `public/media/hero-poster.webp`.
 - Sumber dan lisensi media/font dicatat di folder aset masing-masing.
 - Plus Jakarta Sans di-host lokal melalui `next/font/local`; build tidak mengambil font dari Google.
-- Video muted, loop, playsInline; baru dimuat setelah masuk. Kontrol jeda ada di pojok kanan atas. Video dijeda ketika hero keluar viewport atau tab tersembunyi.
+- Video dengan audio asli, loop, playsInline; baru dimuat setelah klik masuk atau putar manual. Kontrol jeda ada di pojok kanan atas. Video dijeda ketika hero keluar viewport atau tab tersembunyi.
 - Reduced motion dan Save-Data memakai poster; video bisa dimainkan manual. Touch memakai scrolling native. JavaScript diperlukan untuk melewati splash.
 
 ## Verifikasi

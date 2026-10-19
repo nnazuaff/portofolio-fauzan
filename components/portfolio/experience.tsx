@@ -216,7 +216,7 @@ export function Experience({ children }: { children: ReactNode }) {
         <video
           ref={video}
           poster={backgroundMedia.poster}
-          muted loop playsInline preload="none" tabIndex={-1}
+          loop playsInline preload="none" tabIndex={-1}
           className={`hero-video${failed ? " is-unavailable" : ""}`}
           onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)}
           onError={() => { setFailed(true); setRequested(false); }}

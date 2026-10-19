@@ -3,13 +3,10 @@ Source: ../profile-fauzan.jpg (existing owner-provided portrait; original preser
 Transform: EXIF orientation applied, 300x400 WebP quality 85; rendered as 88px avatar.
 
 ambient.mp4 / hero-poster.webp
-Creator: Oleg Gamulinskii
-Title: Changes In Form And Appearance Of A Submerged Material
-Source: https://www.pexels.com/video/changes-in-form-and-appearance-of-a-submerged-material-3163534/
-Download: https://videos.pexels.com/video-files/3163534/3163534-hd_1920_1080_30fps.mp4
-License: Pexels License, https://www.pexels.com/license/
-Free website use and modification permitted; attribution appreciated, not required.
-Video: first 14 seconds, 1280x720, 30 fps, H.264 High/yuv420p, no audio, CRF 28, faststart. Original hues retained.
+Source: owner-provided 6d6b829d-39df-42df-974b-9cce7323a776.mp4.
+Creator/license: not supplied; no third-party license claim made.
+Video: full duration (~67 seconds), 1280x720, original frame rate, H.264/yuv420p, CRF 28, faststart. Original hues retained.
+Audio: original AAC stream preserved; playback starts after entry interaction.
 Poster: first decoded frame of ambient.mp4, 1280x720, WebP quality 82.
 
 ../fonts/plus-jakarta-sans-latin.woff2
